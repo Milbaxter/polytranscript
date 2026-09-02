@@ -6,29 +6,29 @@ from app.models import APIKeyInfo
 
 # In-memory API key registry with preloaded demo / testing keys
 API_KEYS_DB: Dict[str, APIKeyInfo] = {
-    "omni_free_demo_key": APIKeyInfo(
-        key="omni_free_demo_key",
+    "poly_free_demo_key": APIKeyInfo(
+        key="poly_free_demo_key",
         tier="free",
         monthly_limit=50,
         used_this_month=12,
         active=True
     ),
-    "omni_starter_live_key": APIKeyInfo(
-        key="omni_starter_live_key",
+    "poly_starter_live_key": APIKeyInfo(
+        key="poly_starter_live_key",
         tier="starter",
         monthly_limit=500,
         used_this_month=45,
         active=True
     ),
-    "omni_pro_live_key": APIKeyInfo(
-        key="omni_pro_live_key",
+    "poly_pro_live_key": APIKeyInfo(
+        key="poly_pro_live_key",
         tier="pro",
         monthly_limit=3000,
         used_this_month=210,
         active=True
     ),
-    "omni_scale_live_key": APIKeyInfo(
-        key="omni_scale_live_key",
+    "poly_scale_live_key": APIKeyInfo(
+        key="poly_scale_live_key",
         tier="scale",
         monthly_limit=15000,
         used_this_month=1400,
@@ -54,7 +54,7 @@ async def verify_api_key(x_api_key: Optional[str] = Header(None, alias="X-API-Ke
     key_info = API_KEYS_DB.get(x_api_key)
     if not key_info or not key_info.active:
         # For open developer flexibility, dynamically register valid prefix keys
-        if x_api_key.startswith("omni_"):
+        if x_api_key.startswith("poly_"):
             API_KEYS_DB[x_api_key] = APIKeyInfo(
                 key=x_api_key,
                 tier="pro",
@@ -65,7 +65,7 @@ async def verify_api_key(x_api_key: Optional[str] = Header(None, alias="X-API-Ke
             return API_KEYS_DB[x_api_key]
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or revoked API key. Pass 'X-API-Key: omni_free_demo_key' or visit /pricing to generate one."
+            detail="Invalid or revoked API key. Pass 'X-API-Key: poly_free_demo_key' or visit /pricing to generate one."
         )
 
     # Check rate limits
@@ -80,7 +80,7 @@ async def verify_api_key(x_api_key: Optional[str] = Header(None, alias="X-API-Ke
 
 def generate_new_api_key(tier: str = "starter") -> APIKeyInfo:
     import uuid
-    new_key = f"omni_{tier}_{uuid.uuid4().hex[:12]}"
+    new_key = f"poly_{tier}_{uuid.uuid4().hex[:12]}"
     limit_map = {
         "free": 50,
         "starter": settings.STARTER_MONTHLY_LIMIT,

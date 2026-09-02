@@ -2,7 +2,7 @@
 set -e
 
 echo "=========================================="
-echo "⚡ Starting OmniTranscript Suite"
+echo "⚡ Starting PolyTranscript Suite"
 echo "=========================================="
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -5,7 +5,7 @@ import { SponsorBanner } from '../components/SponsorBanner';
 import { Footer } from '../components/Footer';
 
 export const metadata: Metadata = {
-  title: 'OmniTranscript | Multi-Platform Audio Intelligence & MCP Agent API',
+  title: 'PolyTranscript | Multi-Platform Audio Intelligence & MCP Agent API',
   description: 'Transcribe YouTube, TikTok, Podcasts, and Audio with instant AI chaptering, semantic soundbite search, and Agent-ready Model Context Protocol (MCP) server.',
   keywords: [
     'youtube transcript generator',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     'ai chaptering api',
     'audio intelligence api'
   ],
-  authors: [{ name: 'OmniTranscript Team' }],
+  authors: [{ name: 'PolyTranscript Team' }],
 };
 
 export default function RootLayout({

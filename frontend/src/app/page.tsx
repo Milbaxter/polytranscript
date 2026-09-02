@@ -114,7 +114,7 @@ export default function HomePage() {
         <div className="text-center space-y-2">
           <h2 className="text-2xl sm:text-3xl font-bold text-white">Built for Builders, Creators & Autonomous Agents</h2>
           <p className="text-sm text-slate-400 max-w-xl mx-auto">
-            Traditional transcript wrappers break on 429 IP bans and lack multi-platform intelligence. OmniTranscript gives you a battle-tested engine.
+            Traditional transcript wrappers break on 429 IP bans and lack multi-platform intelligence. PolyTranscript gives you a battle-tested engine.
           </p>
         </div>
 

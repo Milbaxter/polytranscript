@@ -1,9 +1,9 @@
 {
   "mcpServers": {
-    "omnitranscript": {
+    "polytranscript": {
       "command": "python",
       "args": [
-        "/Users/YOUR_USERNAME/omnitranscript/backend/cli.py",
+        "/Users/YOUR_USERNAME/polytranscript/backend/cli.py",
         "mcp"
       ]
     }

@@ -99,7 +99,7 @@ Only return valid JSON."""
             key_takeaways=takeaways,
             action_items=actions,
             soundbites=soundbites,
-            social_post=f"🧠 Key takeaways from '{title}':\n\n1. AI-native media extraction\n2. Real-time timestamped intelligence\n3. Actionable developer workflows\n\nCheck out the full breakdown on OmniTranscript 🚀"
+            social_post=f"🧠 Key takeaways from '{title}':\n\n1. AI-native media extraction\n2. Real-time timestamped intelligence\n3. Actionable developer workflows\n\nCheck out the full breakdown on PolyTranscript 🚀"
         )
 
 summarizer = MediaSummarizer()

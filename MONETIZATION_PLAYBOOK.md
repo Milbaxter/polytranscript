@@ -1,4 +1,4 @@
-# 💰 OmniTranscript: The $10K-$50K/Month SaaS & API Playbook
+# 💰 PolyTranscript: The $10K-$50K/Month SaaS & API Playbook
 
 ## Executive Summary & Market Analysis
 
@@ -21,7 +21,7 @@ In August 2026, top public indie hackers reported record monthly revenues:
 3. **The 2026 Wedge: Native Model Context Protocol (MCP) & Multi-Platform Ingestion:**
    - Legacy tools are locked strictly to YouTube and fail on TikTok or Podcasts.
    - **No legacy tool natively provides Model Context Protocol (MCP)** for autonomous agents (Claude Desktop, Cursor, Antigravity, ChatGPT).
-   - OmniTranscript disrupts legacy wrappers by combining **YouTube + TikTok + Podcasts + MCP + AI Chaptering** in a single unified engine.
+   - PolyTranscript disrupts legacy wrappers by combining **YouTube + TikTok + Podcasts + MCP + AI Chaptering** in a single unified engine.
 
 ---
 

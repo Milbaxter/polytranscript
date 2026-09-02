@@ -12,9 +12,9 @@ export default function DocsPage() {
     setTimeout(() => setCopiedSection(null), 2000);
   };
 
-  const curlExample = `curl -X POST https://api.omnitranscript.dev/api/v1/transcribe \\
+  const curlExample = `curl -X POST https://api.polytranscript.dev/api/v1/transcribe \\
   -H "Content-Type: application/json" \\
-  -H "X-API-Key: omni_starter_yourkey" \\
+  -H "X-API-Key: poly_starter_yourkey" \\
   -d '{
     "url": "https://www.youtube.com/watch?v=aircAruvnKk",
     "language": "en",
@@ -25,8 +25,8 @@ export default function DocsPage() {
   const pythonExample = `import httpx
 
 response = httpx.post(
-    "https://api.omnitranscript.dev/api/v1/transcribe",
-    headers={"X-API-Key": "omni_starter_yourkey"},
+    "https://api.polytranscript.dev/api/v1/transcribe",
+    headers={"X-API-Key": "poly_starter_yourkey"},
     json={
         "url": "https://www.tiktok.com/@user/video/1234567890",
         "include_chapters": True,
@@ -43,10 +43,10 @@ for chapter in data["chapters"]:
 
   const mcpConfigExample = `{
   "mcpServers": {
-    "omnitranscript": {
+    "polytranscript": {
       "command": "python",
       "args": [
-        "/path/to/omnitranscript/backend/cli.py",
+        "/path/to/polytranscript/backend/cli.py",
         "mcp"
       ]
     }
@@ -61,7 +61,7 @@ for chapter in data["chapters"]:
           <span>Developer Hub & Agent Integration</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          OmniTranscript API & MCP Documentation
+          PolyTranscript API & MCP Documentation
         </h1>
         <p className="text-sm text-slate-400">
           Learn how to integrate multi-platform transcription, AI chaptering, and soundbite search into your Python apps, TypeScript web apps, and Claude / Cursor AI agents.
@@ -76,7 +76,7 @@ for chapter in data["chapters"]:
         </div>
         <h2 className="text-2xl font-bold text-white">Connect to Claude Desktop & Cursor IDE</h2>
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          OmniTranscript includes a native Model Context Protocol (MCP) server. When configured, AI agents can automatically invoke tools to transcribe YouTube, TikTok, and podcasts, generate AI chapters, search soundbites, and cite timestamps during chat conversations.
+          PolyTranscript includes a native Model Context Protocol (MCP) server. When configured, AI agents can automatically invoke tools to transcribe YouTube, TikTok, and podcasts, generate AI chapters, search soundbites, and cite timestamps during chat conversations.
         </p>
 
         <div className="space-y-2">
@@ -97,15 +97,15 @@ for chapter in data["chapters"]:
 
         <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5">
-            <span className="font-semibold text-white block">omni_transcribe</span>
+            <span className="font-semibold text-white block">poly_transcribe</span>
             <span className="text-slate-400 text-[11px]">Transcribe YouTube/TikTok/Podcast to clean markdown</span>
           </div>
           <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5">
-            <span className="font-semibold text-white block">omni_get_chapters</span>
+            <span className="font-semibold text-white block">poly_get_chapters</span>
             <span className="text-slate-400 text-[11px]">Generate timestamped chapters & bullet points</span>
           </div>
           <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5">
-            <span className="font-semibold text-white block">omni_search_soundbites</span>
+            <span className="font-semibold text-white block">poly_search_soundbites</span>
             <span className="text-slate-400 text-[11px]">Find exact quotes and moments with timestamps</span>
           </div>
         </div>

@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "omnitranscript": {
+    "polytranscript": {
       "command": "python",
       "args": [
         "-m",

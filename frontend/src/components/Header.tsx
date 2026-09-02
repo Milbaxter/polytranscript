@@ -67,7 +67,7 @@ export const Header: React.FC = () => {
             <span>Get API Key</span>
           </Link>
           <a
-            href="https://github.com/Milbaxter/omnitranscript"
+            href="https://github.com/Milbaxter/polytranscript"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-1.5 rounded-lg gradient-btn text-white shadow-sm"

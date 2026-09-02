@@ -14,7 +14,7 @@ export const Footer: React.FC = () => {
             <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
               <AudioWaveform className="w-4 h-4" />
             </div>
-            <span className="font-bold text-sm text-white">OmniTranscript</span>
+            <span className="font-bold text-sm text-white">PolyTranscript</span>
           </div>
           <p className="text-slate-400 text-xs leading-relaxed">
             The next-generation multi-platform transcription, AI chaptering, and soundbite intelligence API for developers and autonomous AI agents.
@@ -86,7 +86,7 @@ export const Footer: React.FC = () => {
             </li>
             <li>
               <a
-                href="https://github.com/Milbaxter/omnitranscript"
+                href="https://github.com/Milbaxter/polytranscript"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-indigo-400 transition-colors flex items-center gap-1"
@@ -104,7 +104,7 @@ export const Footer: React.FC = () => {
 
       <div className="max-w-7xl mx-auto pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
         <div>
-          © {new Date().getFullYear()} OmniTranscript. Built for builders, researchers, and autonomous AI agents.
+          © {new Date().getFullYear()} PolyTranscript. Built for builders, researchers, and autonomous AI agents.
         </div>
         <div className="flex items-center gap-4">
           <span>YouTube™, TikTok™, Apple™ are trademarks of their respective owners.</span>

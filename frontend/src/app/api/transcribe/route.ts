@@ -129,7 +129,7 @@ async function handleYouTube(videoId: string, originalUrl: string, language: str
   if (segments.length === 0) {
     segments = [
       { start: 0.0, end: 12.0, text: `Welcome to "${title}". Spoken audio content is parsed and indexed natively.`, formatted_start: '00:00' },
-      { start: 12.0, end: 32.0, text: 'This transcript was extracted and processed via OmniTranscript multi-platform intelligence.', formatted_start: '00:12' },
+      { start: 12.0, end: 32.0, text: 'This transcript was extracted and processed via PolyTranscript multi-platform intelligence.', formatted_start: '00:12' },
       { start: 32.0, end: 60.0, text: 'Use the export buttons or Model Context Protocol (MCP) server to query this transcript directly in Claude or Cursor.', formatted_start: '00:32' }
     ];
   }

@@ -7,7 +7,7 @@ client = TestClient(app)
 def test_root_and_health():
     res = client.get("/")
     assert res.status_code == 200
-    assert res.json()["service"] == "OmniTranscript"
+    assert res.json()["service"] == "PolyTranscript"
 
     res_health = client.get("/api/v1/health")
     assert res_health.status_code == 200
@@ -27,5 +27,5 @@ def test_generate_api_key():
     assert res.status_code == 200
     data = res.json()
     assert data["tier"] == "starter"
-    assert data["key"].startswith("omni_starter_")
+    assert data["key"].startswith("poly_starter_")
     assert data["monthly_limit"] > 0

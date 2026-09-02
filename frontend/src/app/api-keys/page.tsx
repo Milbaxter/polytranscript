@@ -19,7 +19,7 @@ export default function ApiKeysPage() {
       setApiKey(info);
     } catch {
       // Fallback generation for instant demo
-      const randomKey = `omni_${tier}_` + Math.random().toString(36).substring(2, 14);
+      const randomKey = `poly_${tier}_` + Math.random().toString(36).substring(2, 14);
       setApiKey({
         key: randomKey,
         tier: tier,

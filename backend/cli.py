@@ -15,7 +15,7 @@ from app.ai.chat import chat_engine
 from app.utils.formatters import format_markdown, format_srt, format_vtt
 
 app = typer.Typer(
-    name="omnitranscript",
+    name="polytranscript",
     help="⚡ Multi-Platform Media Intelligence CLI (YouTube + TikTok + Podcasts + MCP)",
     add_completion=False
 )
@@ -146,16 +146,16 @@ def serve(
     port: int = typer.Option(8000, "--port", "-p"),
     reload: bool = typer.Option(True, "--reload/--no-reload")
 ):
-    """Start the OmniTranscript REST API server."""
+    """Start the PolyTranscript REST API server."""
     import uvicorn
-    console.print(f"[bold green]Starting OmniTranscript API on http://{host}:{port}...[/bold green]")
+    console.print(f"[bold green]Starting PolyTranscript API on http://{host}:{port}...[/bold green]")
     uvicorn.run("app.main:app", host=host, port=port, reload=reload)
 
 @app.command()
 def mcp():
     """Start the Model Context Protocol (MCP) server over stdio for AI agents."""
     from app.mcp_server import mcp as mcp_instance
-    console.print("[bold green]Starting OmniTranscript MCP Server (stdio)...[/bold green]", file=sys.stderr)
+    console.print("[bold green]Starting PolyTranscript MCP Server (stdio)...[/bold green]", file=sys.stderr)
     mcp_instance.run(transport="stdio")
 
 if __name__ == "__main__":

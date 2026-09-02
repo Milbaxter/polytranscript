@@ -187,7 +187,7 @@ export default function PricingPage() {
             </p>
           </div>
           <a
-            href="mailto:sponsor@omnitranscript.dev?subject=Sponsor Slot Inquiry"
+            href="mailto:sponsor@polytranscript.dev?subject=Sponsor Slot Inquiry"
             className="px-6 py-3 rounded-xl gradient-btn text-white text-xs font-semibold whitespace-nowrap shadow-lg flex items-center gap-2"
           >
             <span>Book Sponsor Banner</span>

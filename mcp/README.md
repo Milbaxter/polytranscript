@@ -1,17 +1,17 @@
-# OmniTranscript Model Context Protocol (MCP) Server
+# PolyTranscript Model Context Protocol (MCP) Server
 
-OmniTranscript includes a native Model Context Protocol (MCP) server that empowers any AI agent (Claude Desktop, Cursor, Antigravity, Windsurf, LangChain, LlamaIndex, OpenAI Assistants) to transcribe, search, and reason over audio and video natively.
+PolyTranscript includes a native Model Context Protocol (MCP) server that empowers any AI agent (Claude Desktop, Cursor, Antigravity, Windsurf, LangChain, LlamaIndex, OpenAI Assistants) to transcribe, search, and reason over audio and video natively.
 
 ## 🛠 Available MCP Tools
 
 | Tool Name | Parameters | Description |
 |---|---|---|
-| `omni_transcribe` | `url`, `language`, `format` | Transcribes YouTube, TikTok, Podcast, or Audio file into formatted text or JSON. |
-| `omni_get_chapters` | `url` | Generates timestamped AI chapters with key talking points. |
-| `omni_summarize` | `url` | Returns executive TL;DR, key takeaways, action checklist, and quotes. |
-| `omni_search_soundbites` | `url`, `query` | Locates exact moments and quotes with jump timestamps and relevance scores. |
-| `omni_ask_media` | `url`, `question` | Grounded RAG question-answering with timestamp citations. |
-| `omni_get_metadata` | `url` | Returns channel, duration, view count, platform, and upload date. |
+| `poly_transcribe` | `url`, `language`, `format` | Transcribes YouTube, TikTok, Podcast, or Audio file into formatted text or JSON. |
+| `poly_get_chapters` | `url` | Generates timestamped AI chapters with key talking points. |
+| `poly_summarize` | `url` | Returns executive TL;DR, key takeaways, action checklist, and quotes. |
+| `poly_search_soundbites` | `url`, `query` | Locates exact moments and quotes with jump timestamps and relevance scores. |
+| `poly_ask_media` | `url`, `question` | Grounded RAG question-answering with timestamp citations. |
+| `poly_get_metadata` | `url` | Returns channel, duration, view count, platform, and upload date. |
 
 ## 🚀 Setup Instructions
 
@@ -21,10 +21,10 @@ Open `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
 ```json
 {
   "mcpServers": {
-    "omnitranscript": {
-      "command": "/path/to/omnitranscript/backend/venv/bin/python",
+    "polytranscript": {
+      "command": "/path/to/polytranscript/backend/venv/bin/python",
       "args": [
-        "/path/to/omnitranscript/backend/cli.py",
+        "/path/to/polytranscript/backend/cli.py",
         "mcp"
       ]
     }
@@ -34,12 +34,12 @@ Open `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
 
 ### 2. Cursor IDE Setup
 Add to Cursor Settings -> MCP Servers:
-- **Name:** `omnitranscript`
+- **Name:** `polytranscript`
 - **Type:** `command`
-- **Command:** `/path/to/omnitranscript/backend/venv/bin/python /path/to/omnitranscript/backend/cli.py mcp`
+- **Command:** `/path/to/polytranscript/backend/venv/bin/python /path/to/polytranscript/backend/cli.py mcp`
 
 ### 3. Verification
 Ask Claude or Cursor:
 > *"Summarize this YouTube video and give me the top 3 soundbites with timestamps: https://www.youtube.com/watch?v=aircAruvnKk"*
 
-The agent will invoke `omni_summarize` or `omni_get_chapters` automatically!
+The agent will invoke `poly_summarize` or `poly_get_chapters` automatically!

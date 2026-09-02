@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ OmniTranscript
+# ⚡ PolyTranscript
 
 ### Universal Media Intelligence API & Agent-Ready Model Context Protocol (MCP) Server
 **Transcribe YouTube, TikTok & Podcasts with Built-in AI Chaptering, Soundbite Search, and Native Agent Tooling**
@@ -26,14 +26,14 @@ However, legacy transcript SaaS tools suffer from major flaws:
 2. **Fragile Scrapers:** They break frequently on IP blocks (429 errors) and lack multi-tiered fallback pipelines.
 3. **No Native Agent Tooling:** They do **not** support the open **Model Context Protocol (MCP)**, blocking autonomous AI agents (Claude Desktop, Cursor, Antigravity, ChatGPT) from querying audio data.
 
-**OmniTranscript** disrupts this space with a unified, production-grade engine that ingests **YouTube + TikTok + Podcasts**, provides **sub-second AI chaptering & semantic soundbite search**, and connects directly into **Claude & Cursor via MCP**.
+**PolyTranscript** disrupts this space with a unified, production-grade engine that ingests **YouTube + TikTok + Podcasts**, provides **sub-second AI chaptering & semantic soundbite search**, and connects directly into **Claude & Cursor via MCP**.
 
 ---
 
 ## 🏛 Architecture Overview
 
 ```
-                                  OmniTranscript Pipeline
+                                  PolyTranscript Pipeline
                                   
   ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
   │  YouTube Videos │   │  TikTok Videos  │   │ Apple / Spotify │   │ Direct Audio /  │
@@ -89,8 +89,8 @@ However, legacy transcript SaaS tools suffer from major flaws:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Milbaxter/omnitranscript.git
-cd omnitranscript/backend
+git clone https://github.com/Milbaxter/polytranscript.git
+cd polytranscript/backend
 
 # Create virtual environment
 python3 -m venv venv
@@ -133,7 +133,7 @@ npm run dev
 
 ## 🤖 Model Context Protocol (MCP) Integration
 
-OmniTranscript includes a native MCP server exposing rich tools to Claude Desktop, Cursor, and AI agents.
+PolyTranscript includes a native MCP server exposing rich tools to Claude Desktop, Cursor, and AI agents.
 
 ### Claude Desktop Setup
 Add to your `claude_desktop_config.json`:
@@ -141,10 +141,10 @@ Add to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "omnitranscript": {
-      "command": "/absolute/path/to/omnitranscript/backend/venv/bin/python",
+    "polytranscript": {
+      "command": "/absolute/path/to/polytranscript/backend/venv/bin/python",
       "args": [
-        "/absolute/path/to/omnitranscript/backend/cli.py",
+        "/absolute/path/to/polytranscript/backend/cli.py",
         "mcp"
       ]
     }
@@ -153,12 +153,12 @@ Add to your `claude_desktop_config.json`:
 ```
 
 ### Available MCP Tools:
-- `omni_transcribe(url, language, format)`: Transcribe any URL to Markdown/JSON.
-- `omni_get_chapters(url)`: Extract timestamped AI chapters.
-- `omni_summarize(url)`: Generate executive summary, takeaways, and action items.
-- `omni_search_soundbites(url, query)`: Search for exact moments with timestamps.
-- `omni_ask_media(url, question)`: Grounded RAG Q&A with timestamp citations.
-- `omni_get_metadata(url)`: Extract title, author, duration, views, and platform.
+- `poly_transcribe(url, language, format)`: Transcribe any URL to Markdown/JSON.
+- `poly_get_chapters(url)`: Extract timestamped AI chapters.
+- `poly_summarize(url)`: Generate executive summary, takeaways, and action items.
+- `poly_search_soundbites(url, query)`: Search for exact moments with timestamps.
+- `poly_ask_media(url, question)`: Grounded RAG Q&A with timestamp citations.
+- `poly_get_metadata(url)`: Extract title, author, duration, views, and platform.
 
 ---
 
@@ -170,7 +170,7 @@ Transcribe YouTube, TikTok, Podcast, or Audio URL.
 ```bash
 curl -X POST http://localhost:8000/api/v1/transcribe \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: omni_starter_live_key" \
+  -H "X-API-Key: poly_starter_live_key" \
   -d '{
     "url": "https://www.youtube.com/watch?v=aircAruvnKk",
     "language": "en",

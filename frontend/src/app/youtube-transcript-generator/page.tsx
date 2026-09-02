@@ -84,7 +84,7 @@ export default function YouTubePage() {
           <div className="p-5 rounded-2xl glass-panel border border-white/10 space-y-2">
             <h3 className="font-semibold text-white text-sm">How do I get a YouTube video transcript?</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Simply paste any YouTube link above and click Transcribe. OmniTranscript extracts captions directly in milliseconds with zero video downloading required.
+              Simply paste any YouTube link above and click Transcribe. PolyTranscript extracts captions directly in milliseconds with zero video downloading required.
             </p>
           </div>
           <div className="p-5 rounded-2xl glass-panel border border-white/10 space-y-2">

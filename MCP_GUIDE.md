@@ -1,6 +1,6 @@
-# OmniTranscript: Model Context Protocol (MCP) Technical Reference
+# PolyTranscript: Model Context Protocol (MCP) Technical Reference
 
-OmniTranscript implements the official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) specification, allowing autonomous AI agents to query, transcribe, and search multi-modal media streams.
+PolyTranscript implements the official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) specification, allowing autonomous AI agents to query, transcribe, and search multi-modal media streams.
 
 ## MCP Protocol Compatibility
 - Protocol Version: `2024-11-05`
@@ -9,12 +9,12 @@ OmniTranscript implements the official [Model Context Protocol (MCP)](https://mo
 
 ## Tool Specifications
 
-### 1. `omni_transcribe`
+### 1. `poly_transcribe`
 Transcribes any YouTube, TikTok, Podcast, or Audio file into formatted text or JSON.
 
 ```json
 {
-  "name": "omni_transcribe",
+  "name": "poly_transcribe",
   "description": "Transcribe any YouTube video, TikTok, Podcast (Apple/Spotify/RSS), or direct audio URL.",
   "inputSchema": {
     "type": "object",
@@ -39,12 +39,12 @@ Transcribes any YouTube, TikTok, Podcast, or Audio file into formatted text or J
 }
 ```
 
-### 2. `omni_get_chapters`
+### 2. `poly_get_chapters`
 Extracts and generates structured AI chapters with start timestamps, titles, summaries, and key points.
 
 ```json
 {
-  "name": "omni_get_chapters",
+  "name": "poly_get_chapters",
   "description": "Extract and generate smart AI chapters with timestamps for any YouTube, TikTok, or podcast media.",
   "inputSchema": {
     "type": "object",
@@ -59,12 +59,12 @@ Extracts and generates structured AI chapters with start timestamps, titles, sum
 }
 ```
 
-### 3. `omni_search_soundbites`
+### 3. `poly_search_soundbites`
 Searches across audio/video transcripts for exact moments or concepts with precise timestamps.
 
 ```json
 {
-  "name": "omni_search_soundbites",
+  "name": "poly_search_soundbites",
   "description": "Search across audio/video transcript for exact moments, phrases, or topics and get direct timestamps.",
   "inputSchema": {
     "type": "object",
@@ -83,12 +83,12 @@ Searches across audio/video transcripts for exact moments or concepts with preci
 }
 ```
 
-### 4. `omni_ask_media`
+### 4. `poly_ask_media`
 Performs grounded retrieval-augmented generation (RAG) over the media recording, answering questions with timestamp citations.
 
 ```json
 {
-  "name": "omni_ask_media",
+  "name": "poly_ask_media",
   "description": "Ask any question about a video or podcast and get a grounded answer with timestamp citations.",
   "inputSchema": {
     "type": "object",

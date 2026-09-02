@@ -11,10 +11,10 @@ from app.ai.chat import chat_engine
 from app.utils.formatters import format_markdown
 
 # Initialize FastMCP Server
-mcp = FastMCP("omnitranscript-mcp")
+mcp = FastMCP("polytranscript-mcp")
 
 @mcp.tool()
-async def omni_transcribe(url: str, language: str = "en", format: str = "markdown") -> str:
+async def poly_transcribe(url: str, language: str = "en", format: str = "markdown") -> str:
     """
     Transcribe any YouTube video, TikTok, Podcast (Apple/Spotify/RSS), or direct audio URL.
     Returns clean timestamped transcript text.
@@ -35,7 +35,7 @@ async def omni_transcribe(url: str, language: str = "en", format: str = "markdow
         return f"Error transcribing media from '{url}': {str(e)}"
 
 @mcp.tool()
-async def omni_get_chapters(url: str) -> str:
+async def poly_get_chapters(url: str) -> str:
     """
     Extract and generate smart AI chapters with timestamps for any YouTube, TikTok, or podcast media.
     
@@ -59,7 +59,7 @@ async def omni_get_chapters(url: str) -> str:
         return f"Error extracting chapters for '{url}': {str(e)}"
 
 @mcp.tool()
-async def omni_summarize(url: str) -> str:
+async def poly_summarize(url: str) -> str:
     """
     Generate an executive summary, key takeaways, action items, and soundbites from any video or podcast URL.
     
@@ -86,7 +86,7 @@ async def omni_summarize(url: str) -> str:
         return f"Error summarizing media from '{url}': {str(e)}"
 
 @mcp.tool()
-async def omni_search_soundbites(url: str, query: str) -> str:
+async def poly_search_soundbites(url: str, query: str) -> str:
     """
     Search across audio/video transcript for exact moments, phrases, or topics and get direct timestamps.
     
@@ -109,7 +109,7 @@ async def omni_search_soundbites(url: str, query: str) -> str:
         return f"Error searching soundbites in '{url}': {str(e)}"
 
 @mcp.tool()
-async def omni_ask_media(url: str, question: str) -> str:
+async def poly_ask_media(url: str, question: str) -> str:
     """
     Ask any question about a video or podcast and get a grounded answer with timestamp citations.
     
@@ -131,7 +131,7 @@ async def omni_ask_media(url: str, question: str) -> str:
         return f"Error answering question for '{url}': {str(e)}"
 
 @mcp.tool()
-async def omni_get_metadata(url: str) -> str:
+async def poly_get_metadata(url: str) -> str:
     """
     Get metadata for any media URL (title, author, duration, views, platform, thumbnail).
     

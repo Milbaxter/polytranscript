@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   };
 
   const randomSuffix = Math.random().toString(36).substring(2, 14);
-  const key = `omni_${tier}_${randomSuffix}`;
+  const key = `poly_${tier}_${randomSuffix}`;
 
   return NextResponse.json({
     key,
