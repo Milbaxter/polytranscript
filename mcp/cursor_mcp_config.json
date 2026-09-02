@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "omnitranscript": {
+      "command": "python",
+      "args": [
+        "/Users/YOUR_USERNAME/omnitranscript/backend/cli.py",
+        "mcp"
+      ]
+    }
+  }
+}
