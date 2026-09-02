@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 PlatformType = Literal["youtube", "tiktok", "podcast", "direct_audio", "file_upload", "unknown"]
 
+
 class TranscriptSegment(BaseModel):
     start: float = Field(..., description="Start timestamp in seconds")
     end: float = Field(..., description="End timestamp in seconds")
@@ -18,6 +19,7 @@ class TranscriptSegment(BaseModel):
             return f"{hours:02d}:{mins:02d}:{secs:02d}"
         return f"{mins:02d}:{secs:02d}"
 
+
 class MediaMetadata(BaseModel):
     title: str = "Untitled Media"
     author: str = "Unknown Author"
@@ -28,6 +30,7 @@ class MediaMetadata(BaseModel):
     platform: PlatformType = "unknown"
     url: str = ""
     description: Optional[str] = None
+
 
 class Chapter(BaseModel):
     start: float
@@ -44,12 +47,14 @@ class Chapter(BaseModel):
             return f"{hours:02d}:{mins:02d}:{secs:02d}"
         return f"{mins:02d}:{secs:02d}"
 
+
 class SummaryResponse(BaseModel):
     tldr: str
     key_takeaways: List[str] = []
     action_items: List[str] = []
     soundbites: List[str] = []
     social_post: Optional[str] = None
+
 
 class SearchHit(BaseModel):
     segment_index: int
@@ -59,32 +64,42 @@ class SearchHit(BaseModel):
     score: float
     formatted_start: str
 
+
 class SearchResponse(BaseModel):
     query: str
     total_matches: int
     hits: List[SearchHit]
+    method: str = Field(
+        default="keyword_overlap",
+        description="Search is token/phrase overlap, not embedding-based semantic search.",
+    )
+
 
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant", "system"]
     content: str
+
 
 class ChatRequest(BaseModel):
     url: Optional[str] = None
     transcript_text: Optional[str] = None
     question: str
     history: List[ChatMessage] = []
+    segments: List[TranscriptSegment] = []
+
 
 class ChatResponse(BaseModel):
     answer: str
     relevant_timestamps: List[Dict[str, Any]] = []
+
 
 class TranscribeRequest(BaseModel):
     url: str = Field(..., description="URL to YouTube, TikTok, Podcast RSS/Episode, or Audio file")
     language: Optional[str] = Field("en", description="Target or source language code (e.g., 'en', 'auto')")
     include_chapters: bool = Field(True, description="Generate AI chapters automatically")
     include_summary: bool = Field(True, description="Generate AI summary automatically")
-    enable_diarization: bool = Field(False, description="Attempt speaker diarization")
     output_format: Optional[str] = Field("json", description="Output format: json, srt, vtt, markdown, text")
+
 
 class TranscriptResponse(BaseModel):
     metadata: MediaMetadata
@@ -98,11 +113,21 @@ class TranscriptResponse(BaseModel):
     processing_time_ms: float = 0.0
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
+
+class JobStatusResponse(BaseModel):
+    job_id: str
+    status: Literal["queued", "running", "completed", "failed"]
+    error: Optional[str] = None
+    result: Optional[TranscriptResponse] = None
+    created_at: Optional[str] = None
+
+
 class SponsorInfo(BaseModel):
     enabled: bool = True
     text: str
     link: str
     badge: str
+
 
 class HealthResponse(BaseModel):
     status: str = "ok"
@@ -111,9 +136,18 @@ class HealthResponse(BaseModel):
     ai_providers: Dict[str, bool]
     timestamp: str
 
+
 class APIKeyInfo(BaseModel):
     key: str
     tier: Literal["free", "starter", "pro", "scale", "enterprise"]
     monthly_limit: int
     used_this_month: int
     active: bool
+    stripe_session_id: Optional[str] = None
+    customer_email: Optional[str] = None
+
+
+class KeyFulfillRequest(BaseModel):
+    stripe_session_id: str
+    tier: Literal["starter", "pro", "scale", "enterprise"]
+    customer_email: Optional[str] = None
