@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-lg text-white tracking-tight">Omni<span className="gradient-text">Transcript</span></span>
+              <span className="font-bold text-lg text-white tracking-tight">Poly<span className="gradient-text">Transcript</span></span>
               <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                 MCP Agent
               </span>
@@ -37,7 +37,6 @@ export const Header: React.FC = () => {
           </div>
         </Link>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -57,7 +56,6 @@ export const Header: React.FC = () => {
           })}
         </nav>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-2.5">
           <Link
             href="/api-keys"
