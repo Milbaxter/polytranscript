@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/podcast-transcript-generator',
     '/spotify-podcast-transcript-generator',
     '/mp3-to-text-converter',
+    '/alternatives/transcriptapi-alternative',
+    '/alternatives/descript-alternative',
     '/pricing',
     '/docs',
     '/api-keys',
@@ -23,6 +25,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}${route}`,
     lastModified,
     changeFrequency: 'daily',
-    priority: route === '' ? 1.0 : route.includes('generator') || route.includes('converter') || route.includes('extractor') ? 0.9 : 0.8,
+    priority: route === '' ? 1.0 : route.includes('alternatives') || route.includes('generator') || route.includes('converter') ? 0.9 : 0.8,
   }));
 }

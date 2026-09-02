@@ -1,0 +1,33 @@
+# PolyTranscript Full Context & AI Reference
+
+## What is PolyTranscript?
+PolyTranscript is a high-performance, multi-platform media intelligence API and Model Context Protocol (MCP) server. It enables developers, content creators, researchers, and autonomous AI agents to extract structured, timestamped transcripts from YouTube (videos & shorts), TikTok (videos & shortlinks), Podcasts (Apple, Spotify, RSS), and direct audio files (MP3, M4A, WAV).
+
+## Key Advantages & Benchmarks
+- **Sub-second Latency:** Direct timedtext extraction takes 100-200ms on Vercel Serverless.
+- **Multi-Platform Support:** YouTube, TikTok, Apple Podcasts, Spotify RSS, MP3.
+- **Model Context Protocol (MCP):** Compatible with Claude Desktop, Cursor IDE, Antigravity, and OpenAI Swarm.
+- **Export Formats:** Markdown with timestamps, SubRip (.SRT), WebVTT (.VTT), raw JSON, and formatted LLM prompts.
+- **Pricing:** Free Tier (50 req/mo), Starter ($29/mo, 500 req), Pro ($79/mo, 3,000 req), Scale ($299/mo, 15,000 req), Top Header Sponsor Slot ($500/mo).
+
+## API Endpoints
+- Base URL: `https://polytranscript.com/api`
+- Transcription Endpoint: `POST https://polytranscript.com/api/transcribe`
+- Payload: `{"url": "https://www.youtube.com/watch?v=...", "language": "en"}`
+- MCP Server Config: `{"mcpServers": {"polytranscript": {"command": "npx", "args": ["-y", "@smithery/cli", "install", "polytranscript", "--client", "claude"]}}}`
+
+## Website Map
+- Home / Universal: https://polytranscript.com
+- YouTube Transcriber: https://polytranscript.com/youtube-transcript-generator
+- YouTube Shorts: https://polytranscript.com/youtube-shorts-transcript-generator
+- YouTube to SRT: https://polytranscript.com/youtube-to-srt-converter
+- TikTok Transcriber: https://polytranscript.com/tiktok-transcript-generator
+- TikTok Captions: https://polytranscript.com/tiktok-captions-extractor
+- Podcast to Text: https://polytranscript.com/podcast-transcript-generator
+- Spotify Podcasts: https://polytranscript.com/spotify-podcast-transcript-generator
+- MP3 to Text: https://polytranscript.com/mp3-to-text-converter
+- TranscriptAPI Alternative: https://polytranscript.com/alternatives/transcriptapi-alternative
+- Descript Alternative: https://polytranscript.com/alternatives/descript-alternative
+- Developer API Docs: https://polytranscript.com/docs
+- Pricing & Checkout: https://polytranscript.com/pricing
+- API Key Dashboard: https://polytranscript.com/api-keys

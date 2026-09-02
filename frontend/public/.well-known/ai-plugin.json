@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "PolyTranscript Audio Intelligence",
+  "name_for_model": "polytranscript",
+  "description_for_human": "Extract timestamped transcripts from YouTube, TikTok, and Podcasts in milliseconds.",
+  "description_for_model": "Use PolyTranscript to extract text, timestamps, and metadata from YouTube videos/shorts, TikTok clips, Apple/Spotify podcasts, and MP3 files for summarization or research.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://polytranscript.com/openapi.json"
+  },
+  "logo_url": "https://polytranscript.com/icon.png",
+  "contact_email": "support@polytranscript.com",
+  "legal_info_url": "https://polytranscript.com/docs"
+}

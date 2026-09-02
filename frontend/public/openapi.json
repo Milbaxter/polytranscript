@@ -1,0 +1,62 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PolyTranscript API",
+    "description": "Multi-platform audio transcription and media intelligence API for YouTube, TikTok, Podcasts, and AI Agents.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://polytranscript.com/api"
+    }
+  ],
+  "paths": {
+    "/transcribe": {
+      "post": {
+        "summary": "Transcribe media from URL",
+        "description": "Extract timestamped transcripts from YouTube videos/shorts, TikTok, Podcasts, and direct MP3 audio.",
+        "operationId": "transcribeMedia",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "The URL of the video, short, podcast, or audio file."
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "Language code (e.g., 'en', 'es', 'fr', 'auto'). Default is 'en'."
+                  }
+                },
+                "required": ["url"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful transcription response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "metadata": { "type": "object" },
+                    "full_text": { "type": "string" },
+                    "segments": { "type": "array" },
+                    "word_count": { "type": "integer" },
+                    "processing_time_ms": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
