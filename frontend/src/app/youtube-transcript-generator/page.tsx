@@ -4,31 +4,26 @@ import React, { useState } from 'react';
 import { MediaInput } from '../../components/MediaInput';
 import { InteractivePlayer } from '../../components/InteractivePlayer';
 import { TranscriptViewer } from '../../components/TranscriptViewer';
-import { ChaptersList } from '../../components/ChaptersList';
-import { SummaryCard } from '../../components/SummaryCard';
 import { ExportMenu } from '../../components/ExportMenu';
 import { transcribeMedia } from '../../lib/api';
 import { TranscriptResponse } from '../../lib/types';
-import { Sparkles, Layers, FileText } from 'lucide-react';
 import { YoutubeIcon } from '../../components/Icons';
 
 export default function YouTubePage() {
   const [transcript, setTranscript] = useState<TranscriptResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'transcript' | 'chapters' | 'summary'>('transcript');
   const [seekTime, setSeekTime] = useState<number | null>(null);
 
   const handleTranscribe = async (
     url: string,
-    options: { language: string; include_chapters: boolean; include_summary: boolean }
+    options: { language: string }
   ) => {
     setIsLoading(true);
     setError(null);
     try {
       const res = await transcribeMedia(url, options);
       setTranscript(res);
-      setActiveTab(res.summary ? 'summary' : 'transcript');
     } catch (err: any) {
       setError(err.message || 'Failed to extract YouTube transcript.');
     } finally {
@@ -44,10 +39,10 @@ export default function YouTubePage() {
           <span>Instant YouTube Transcript Generator</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white max-w-4xl mx-auto">
-          Free <span className="text-red-500">YouTube Transcript</span> Generator & AI Chaptering
+          Free <span className="text-red-500">YouTube Transcript</span> Generator & Subtitle Exporter
         </h1>
         <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto">
-          Convert any YouTube video or Short into accurate timestamped text, AI summaries, and export to SRT, VTT, Markdown, or Claude/ChatGPT prompt with one click.
+          Convert any YouTube video or Short into accurate timestamped text, and export to SRT, VTT, Markdown, or Claude/ChatGPT prompt with one click.
         </p>
 
         <div className="pt-4">
@@ -71,50 +66,12 @@ export default function YouTubePage() {
           </div>
 
           <div className="lg:col-span-7 space-y-6">
-            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-              {transcript.summary && (
-                <button
-                  onClick={() => setActiveTab('summary')}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    activeTab === 'summary' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>AI Summary</span>
-                </button>
-              )}
-              {transcript.chapters && transcript.chapters.length > 0 && (
-                <button
-                  onClick={() => setActiveTab('chapters')}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    activeTab === 'chapters' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>Chapters ({transcript.chapters.length})</span>
-                </button>
-              )}
-              <button
-                onClick={() => setActiveTab('transcript')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeTab === 'transcript' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Transcript ({transcript.segments.length})</span>
-              </button>
-            </div>
-
             <div className="rounded-2xl glass-panel p-6 border border-white/10">
-              {activeTab === 'summary' && transcript.summary && (
-                <SummaryCard summary={transcript.summary} metadata={transcript.metadata} />
-              )}
-              {activeTab === 'chapters' && (
-                <ChaptersList chapters={transcript.chapters} onSeek={setSeekTime} />
-              )}
-              {activeTab === 'transcript' && (
-                <TranscriptViewer segments={transcript.segments} onSeek={setSeekTime} activeTime={seekTime} />
-              )}
+              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                <h3 className="font-semibold text-sm text-white">YouTube Transcript</h3>
+                <span className="text-xs text-slate-400 font-mono">{transcript.word_count.toLocaleString()} words</span>
+              </div>
+              <TranscriptViewer segments={transcript.segments} onSeek={setSeekTime} activeTime={seekTime} />
             </div>
           </div>
         </section>
@@ -127,13 +84,13 @@ export default function YouTubePage() {
           <div className="p-5 rounded-2xl glass-panel border border-white/10 space-y-2">
             <h3 className="font-semibold text-white text-sm">How do I get a YouTube video transcript?</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Simply paste any YouTube link above and click Transcribe. OmniTranscript extracts captions directly in milliseconds, or transcribes the audio using Whisper AI if no captions are present.
+              Simply paste any YouTube link above and click Transcribe. OmniTranscript extracts captions directly in milliseconds with zero video downloading required.
             </p>
           </div>
           <div className="p-5 rounded-2xl glass-panel border border-white/10 space-y-2">
-            <h3 className="font-semibold text-white text-sm">Can I export to Claude or ChatGPT?</h3>
+            <h3 className="font-semibold text-white text-sm">Can I export to Claude or Cursor via MCP?</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Yes! Click "Copy for AI / Claude" to get clean formatted markdown with timestamps and chapters ready for prompting.
+              Yes! Click "Copy for AI / Claude" to get clean formatted markdown with timestamps, or configure our native Model Context Protocol (MCP) server for automated agent calls.
             </p>
           </div>
         </div>

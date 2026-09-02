@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { MediaInput } from '../../components/MediaInput';
 import { InteractivePlayer } from '../../components/InteractivePlayer';
 import { TranscriptViewer } from '../../components/TranscriptViewer';
-import { SummaryCard } from '../../components/SummaryCard';
 import { ExportMenu } from '../../components/ExportMenu';
 import { transcribeMedia } from '../../lib/api';
 import { TranscriptResponse } from '../../lib/types';
@@ -18,7 +17,7 @@ export default function TikTokPage() {
 
   const handleTranscribe = async (
     url: string,
-    options: { language: string; include_chapters: boolean; include_summary: boolean }
+    options: { language: string }
   ) => {
     setIsLoading(true);
     setError(null);
@@ -43,7 +42,7 @@ export default function TikTokPage() {
           Instant <span className="text-pink-500">TikTok Transcript</span> & Captions to Text
         </h1>
         <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto">
-          Extract exact spoken words from TikTok videos, shortlinks (vm.tiktok.com), and viral clips. Powered by Whisper AI speech recognition.
+          Extract exact spoken words from TikTok videos, shortlinks (vm.tiktok.com), and viral clips.
         </p>
 
         <div className="pt-4">
@@ -67,10 +66,11 @@ export default function TikTokPage() {
           </div>
 
           <div className="lg:col-span-7 space-y-6">
-            <div className="rounded-2xl glass-panel p-6 border border-white/10 space-y-6">
-              {transcript.summary && (
-                <SummaryCard summary={transcript.summary} metadata={transcript.metadata} />
-              )}
+            <div className="rounded-2xl glass-panel p-6 border border-white/10">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                <h3 className="font-semibold text-sm text-white">TikTok Transcript</h3>
+                <span className="text-xs text-slate-400 font-mono">{transcript.word_count.toLocaleString()} words</span>
+              </div>
               <TranscriptViewer segments={transcript.segments} onSeek={setSeekTime} activeTime={seekTime} />
             </div>
           </div>

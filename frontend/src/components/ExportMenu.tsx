@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { TranscriptResponse } from '../lib/types';
-import { Download, Copy, Check, FileText, Code, Sparkles } from 'lucide-react';
+import { Download, Copy, Check, Sparkles, Code } from 'lucide-react';
 
 interface ExportMenuProps {
   transcript: TranscriptResponse;
@@ -31,19 +31,9 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({ transcript }) => {
 
   const getMarkdown = () => {
     const m = transcript.metadata;
-    let md = `# ${m.title}\n**Source:** ${m.url} | **Words:** ${transcript.word_count}\n\n`;
-    if (transcript.summary) {
-      md += `## ⚡ Executive Summary\n${transcript.summary.tldr}\n\n`;
-    }
-    if (transcript.chapters && transcript.chapters.length > 0) {
-      md += `## 📑 Chapters\n`;
-      transcript.chapters.forEach((c) => {
-        md += `### [${c.formatted_start || c.start}s] ${c.title}\n${c.summary}\n\n`;
-      });
-    }
-    md += `## 📝 Transcript\n`;
+    let md = `# ${m.title}\n**Source:** ${m.url} | **Words:** ${transcript.word_count} | **Platform:** ${m.platform.toUpperCase()}\n\n---\n\n## 📝 Transcript\n\n`;
     transcript.segments.forEach((s) => {
-      md += `[${s.formatted_start || s.start}s] ${s.text}\n\n`;
+      md += `\`[${s.formatted_start || s.start}]\` ${s.text}\n\n`;
     });
     return md;
   };
@@ -64,7 +54,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({ transcript }) => {
   };
 
   const getLLMPrompt = () => {
-    return `<MEDIA_TRANSCRIPT title="${transcript.metadata.title}" url="${transcript.metadata.url}">\n${transcript.full_text}\n</MEDIA_TRANSCRIPT>\n\nPlease analyze this transcript.`;
+    return `<MEDIA_TRANSCRIPT title="${transcript.metadata.title}" platform="${transcript.metadata.platform}" url="${transcript.metadata.url}">\n${transcript.full_text}\n</MEDIA_TRANSCRIPT>\n\nPlease analyze this transcript.`;
   };
 
   return (

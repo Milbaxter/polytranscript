@@ -4,30 +4,26 @@ import React, { useState } from 'react';
 import { MediaInput } from '../../components/MediaInput';
 import { InteractivePlayer } from '../../components/InteractivePlayer';
 import { TranscriptViewer } from '../../components/TranscriptViewer';
-import { ChaptersList } from '../../components/ChaptersList';
-import { SummaryCard } from '../../components/SummaryCard';
 import { ExportMenu } from '../../components/ExportMenu';
 import { transcribeMedia } from '../../lib/api';
 import { TranscriptResponse } from '../../lib/types';
-import { Radio, Sparkles, Layers, FileText } from 'lucide-react';
+import { Radio } from 'lucide-react';
 
 export default function PodcastPage() {
   const [transcript, setTranscript] = useState<TranscriptResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'summary' | 'chapters' | 'transcript'>('summary');
   const [seekTime, setSeekTime] = useState<number | null>(null);
 
   const handleTranscribe = async (
     url: string,
-    options: { language: string; include_chapters: boolean; include_summary: boolean }
+    options: { language: string }
   ) => {
     setIsLoading(true);
     setError(null);
     try {
       const res = await transcribeMedia(url, options);
       setTranscript(res);
-      setActiveTab(res.summary ? 'summary' : 'transcript');
     } catch (err: any) {
       setError(err.message || 'Failed to transcribe podcast episode.');
     } finally {
@@ -43,10 +39,10 @@ export default function PodcastPage() {
           <span>Podcast RSS, Apple & Spotify Transcriber</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white max-w-4xl mx-auto">
-          Full <span className="text-purple-400">Podcast to Text</span> with AI Chapters & Soundbites
+          Full <span className="text-purple-400">Podcast to Text</span> with Timestamps & Export
         </h1>
         <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto">
-          Paste any Apple Podcasts episode, Spotify URL, RSS XML feed, or MP3 file. Generate long-form transcripts with automated executive summaries and quotes.
+          Paste any Apple Podcasts episode, Spotify URL, RSS XML feed, or MP3 file. Generate long-form transcripts with synchronized playback.
         </p>
 
         <div className="pt-4">
@@ -70,50 +66,12 @@ export default function PodcastPage() {
           </div>
 
           <div className="lg:col-span-7 space-y-6">
-            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-              {transcript.summary && (
-                <button
-                  onClick={() => setActiveTab('summary')}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    activeTab === 'summary' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>AI Summary</span>
-                </button>
-              )}
-              {transcript.chapters && transcript.chapters.length > 0 && (
-                <button
-                  onClick={() => setActiveTab('chapters')}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    activeTab === 'chapters' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>Chapters ({transcript.chapters.length})</span>
-                </button>
-              )}
-              <button
-                onClick={() => setActiveTab('transcript')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeTab === 'transcript' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Transcript ({transcript.segments.length})</span>
-              </button>
-            </div>
-
             <div className="rounded-2xl glass-panel p-6 border border-white/10">
-              {activeTab === 'summary' && transcript.summary && (
-                <SummaryCard summary={transcript.summary} metadata={transcript.metadata} />
-              )}
-              {activeTab === 'chapters' && (
-                <ChaptersList chapters={transcript.chapters} onSeek={setSeekTime} />
-              )}
-              {activeTab === 'transcript' && (
-                <TranscriptViewer segments={transcript.segments} onSeek={setSeekTime} activeTime={seekTime} />
-              )}
+              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                <h3 className="font-semibold text-sm text-white">Podcast Transcript</h3>
+                <span className="text-xs text-slate-400 font-mono">{transcript.word_count.toLocaleString()} words</span>
+              </div>
+              <TranscriptViewer segments={transcript.segments} onSeek={setSeekTime} activeTime={seekTime} />
             </div>
           </div>
         </section>

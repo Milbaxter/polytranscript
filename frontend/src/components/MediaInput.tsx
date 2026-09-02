@@ -5,25 +5,23 @@ import { Radio, Search, Sparkles, Loader2, ArrowRight } from 'lucide-react';
 import { YoutubeIcon, TikTokIcon } from './Icons';
 
 interface MediaInputProps {
-  onTranscribe: (url: string, options: { language: string; include_chapters: boolean; include_summary: boolean }) => void;
+  onTranscribe: (url: string, options: { language: string }) => void;
   isLoading: boolean;
 }
 
 export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading }) => {
   const [url, setUrl] = useState('');
   const [language, setLanguage] = useState('en');
-  const [includeChapters, setIncludeChapters] = useState(true);
-  const [includeSummary, setIncludeSummary] = useState(true);
 
   const getPlatformIcon = () => {
     if (/youtube\.com|youtu\.be/.test(url)) {
-      return <YoutubeIcon className="w-5 h-5 text-red-500" />;
+      return <YoutubeIcon className="w-5 h-5 text-red-500 animate-pulse" />;
     }
     if (/tiktok\.com/.test(url)) {
-      return <TikTokIcon className="w-5 h-5 text-pink-500" />;
+      return <TikTokIcon className="w-5 h-5 text-pink-500 animate-pulse" />;
     }
     if (/apple\.com|spotify\.com|rss|feed|\.mp3/.test(url)) {
-      return <Radio className="w-5 h-5 text-purple-400" />;
+      return <Radio className="w-5 h-5 text-purple-400 animate-pulse" />;
     }
     return <Search className="w-5 h-5 text-slate-400" />;
   };
@@ -31,21 +29,17 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!url.trim() || isLoading) return;
-    onTranscribe(url.trim(), {
-      language,
-      include_chapters: includeChapters,
-      include_summary: includeSummary
-    });
+    onTranscribe(url.trim(), { language });
   };
 
   const sampleUrls = [
-    { label: '3Blue1Brown Neural Networks (YouTube)', url: 'https://www.youtube.com/watch?v=aircAruvnKk' },
-    { label: 'Lex Fridman AI & Robotics (YouTube)', url: 'https://www.youtube.com/watch?v=jvqFAi7vkBc' },
-    { label: 'Tech & AI Podcast (RSS / MP3)', url: 'https://traffic.libsyn.com/show/episode1.mp3' },
+    { label: '3Blue1Brown (YouTube)', url: 'https://www.youtube.com/watch?v=aircAruvnKk' },
+    { label: 'Lex Fridman (YouTube)', url: 'https://www.youtube.com/watch?v=jvqFAi7vkBc' },
+    { label: 'Tech Podcast (RSS / MP3)', url: 'https://traffic.libsyn.com/show/episode1.mp3' },
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4">
+    <div className="w-full max-w-4xl mx-auto space-y-3">
       <form onSubmit={handleSubmit} className="relative group">
         <div className="relative flex items-center rounded-2xl glass-panel-glow p-2 transition-all duration-300">
           <div className="pl-3 pr-2 flex items-center justify-center">
@@ -62,7 +56,7 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
           <button
             type="submit"
             disabled={isLoading || !url.trim()}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl gradient-btn text-white text-xs md:text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-md cursor-pointer shrink-0"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl gradient-btn text-white text-xs md:text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-md cursor-pointer shrink-0"
           >
             {isLoading ? (
               <>
@@ -80,43 +74,23 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
         </div>
       </form>
 
-      {/* Options & Quick Filters */}
+      {/* Quick Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 px-2">
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-1.5 cursor-pointer hover:text-slate-300">
-            <input
-              type="checkbox"
-              checked={includeChapters}
-              onChange={(e) => setIncludeChapters(e.target.checked)}
-              className="rounded bg-slate-800 border-slate-700 text-indigo-500 focus:ring-indigo-500"
-            />
-            <span>AI Chaptering</span>
-          </label>
-          <label className="flex items-center gap-1.5 cursor-pointer hover:text-slate-300">
-            <input
-              type="checkbox"
-              checked={includeSummary}
-              onChange={(e) => setIncludeSummary(e.target.checked)}
-              className="rounded bg-slate-800 border-slate-700 text-indigo-500 focus:ring-indigo-500"
-            />
-            <span>Executive Summary</span>
-          </label>
-          <div className="flex items-center gap-1">
-            <span className="text-slate-500">Language:</span>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-slate-800/80 border border-slate-700/60 rounded px-2 py-0.5 text-xs text-slate-200 focus:outline-none"
-            >
-              <option value="en">English (auto)</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-              <option value="zh">Chinese</option>
-              <option value="ja">Japanese</option>
-              <option value="auto">Auto-detect</option>
-            </select>
-          </div>
+        <div className="flex items-center gap-2">
+          <span className="text-slate-500">Language:</span>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="bg-slate-800/80 border border-slate-700/60 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none"
+          >
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="zh">Chinese</option>
+            <option value="ja">Japanese</option>
+            <option value="auto">Auto-detect</option>
+          </select>
         </div>
 
         {/* Fast Samples */}
@@ -128,11 +102,11 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
               type="button"
               onClick={() => {
                 setUrl(s.url);
-                onTranscribe(s.url, { language, include_chapters: includeChapters, include_summary: includeSummary });
+                onTranscribe(s.url, { language });
               }}
-              className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 border border-white/5 text-[11px] text-slate-300 hover:text-white transition-colors truncate max-w-[180px]"
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-[11px] text-slate-300 hover:text-white transition-colors truncate"
             >
-              {s.label.split(' ')[0]} {s.label.split(' ')[1]}
+              {s.label}
             </button>
           ))}
         </div>
