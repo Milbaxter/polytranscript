@@ -35,7 +35,7 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
   const sampleUrls = [
     { label: '3Blue1Brown (YouTube)', url: 'https://www.youtube.com/watch?v=aircAruvnKk' },
     { label: 'Lex Fridman (YouTube)', url: 'https://www.youtube.com/watch?v=jvqFAi7vkBc' },
-    { label: 'Tech Podcast (RSS / MP3)', url: 'https://traffic.libsyn.com/show/episode1.mp3' },
+    { label: 'CC0 sample MP3 (MDN)', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3' },
   ];
 
   return (
@@ -49,7 +49,7 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Paste any YouTube, TikTok, Apple Podcast, RSS Feed, or Audio URL..."
+            placeholder="Paste any YouTube, TikTok, Apple Podcast, RSS episode, or Audio URL..."
             className="w-full bg-transparent text-white placeholder-slate-400 text-sm md:text-base focus:outline-none px-2 py-2.5 font-sans"
             disabled={isLoading}
           />
@@ -74,7 +74,6 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
         </div>
       </form>
 
-      {/* Quick Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 px-2">
         <div className="flex items-center gap-2">
           <span className="text-slate-500">Language:</span>
@@ -93,7 +92,6 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
           </select>
         </div>
 
-        {/* Fast Samples */}
         <div className="flex items-center gap-1.5 overflow-x-auto py-1">
           <span className="text-[11px] text-slate-500 hidden sm:inline">Try:</span>
           {sampleUrls.map((s, idx) => (

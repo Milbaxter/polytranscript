@@ -11,6 +11,11 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - GROQ_API_KEY=${GROQ_API_KEY}
       - SPONSOR_ENABLED=true
+      - SPONSOR_LINK=/pricing#sponsor
+      - HTTP_PROXY=${HTTP_PROXY:-}
+      - HTTPS_PROXY=${HTTPS_PROXY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+      - DATA_DIR=/tmp/polytranscript/data
     volumes:
       - /tmp/polytranscript:/tmp/polytranscript
     restart: unless-stopped
@@ -22,7 +27,18 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      # /api/transcribe reads BACKEND_URL (server-side). NEXT_PUBLIC_API_URL is unused by that route.
+      - BACKEND_URL=http://backend:8000
+      - APP_URL=${APP_URL:-http://localhost:3000}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+      - STRIPE_PRICE_STARTER_MONTHLY=${STRIPE_PRICE_STARTER_MONTHLY:-}
+      - STRIPE_PRICE_STARTER_YEARLY=${STRIPE_PRICE_STARTER_YEARLY:-}
+      - STRIPE_PRICE_PRO_MONTHLY=${STRIPE_PRICE_PRO_MONTHLY:-}
+      - STRIPE_PRICE_PRO_YEARLY=${STRIPE_PRICE_PRO_YEARLY:-}
+      - STRIPE_PRICE_SCALE_MONTHLY=${STRIPE_PRICE_SCALE_MONTHLY:-}
+      - STRIPE_PRICE_SCALE_YEARLY=${STRIPE_PRICE_SCALE_YEARLY:-}
+      - STRIPE_PRICE_SPONSOR=${STRIPE_PRICE_SPONSOR:-}
     depends_on:
       - backend
     restart: unless-stopped

@@ -2,18 +2,18 @@ import re
 import os
 import tempfile
 import asyncio
-from typing import Optional, List
 import yt_dlp
-import httpx
 
-from app.models import MediaMetadata, TranscriptResponse, TranscriptSegment
+from app.models import MediaMetadata, TranscriptResponse
 from app.parsers.base import BaseMediaParser
 from app.ai.transcriber import transcriber
 from app.config import settings
+from app.utils.proxy import ytdlp_proxy_opts
 
 TIKTOK_REGEX = re.compile(
     r'(?:https?://)?(?:www\.|vm\.|vt\.|m\.)?tiktok\.com/(?:@[\w.-]+/video/\d+|[\w-]+|t/\w+)'
 )
+
 
 class TikTokParser(BaseMediaParser):
     def can_handle(self, url: str) -> bool:
@@ -24,6 +24,7 @@ class TikTokParser(BaseMediaParser):
             'skip_download': True,
             'quiet': True,
             'no_warnings': True,
+            **ytdlp_proxy_opts(),
         }
 
         def _fetch():
@@ -31,15 +32,15 @@ class TikTokParser(BaseMediaParser):
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=False)
                     return MediaMetadata(
-                        title=info.get('title') or info.get('description', 'TikTok Video')[:80],
+                        title=info.get('title') or (info.get('description') or 'TikTok Video')[:80],
                         author=info.get('uploader') or info.get('channel', 'TikTok Creator'),
-                        duration_seconds=float(info.get('duration', 0.0)),
+                        duration_seconds=float(info.get('duration', 0.0) or 0.0),
                         thumbnail_url=info.get('thumbnail'),
                         view_count=info.get('view_count'),
                         upload_date=info.get('upload_date'),
                         platform="tiktok",
                         url=url,
-                        description=info.get('description', '')[:500]
+                        description=(info.get('description') or '')[:500]
                     )
             except Exception:
                 return MediaMetadata(
@@ -67,6 +68,7 @@ class TikTokParser(BaseMediaParser):
             'no_warnings': True,
             'writesubtitles': True,
             'allsubtitles': True,
+            **ytdlp_proxy_opts(),
         }
 
         def _fetch_and_download():
@@ -76,27 +78,18 @@ class TikTokParser(BaseMediaParser):
                 return info, actual_file
 
         try:
-            info, audio_file = await asyncio.to_thread(_fetch_and_download)
+            _info, audio_file = await asyncio.to_thread(_fetch_and_download)
             metadata = await metadata_task
-
-            # Check if direct subtitles exist in info
-            subtitles = info.get('subtitles') or info.get('automatic_captions') or {}
-            if subtitles and (language in subtitles or 'en' in subtitles):
-                # Try parsing direct subtitle json if available
-                sub_lang = language if language in subtitles else 'en'
-                # Subtitles extracted or fallback to audio transcription
-            
-            # Transcribe audio file with Whisper
+            if not os.path.exists(audio_file):
+                raise RuntimeError("Failed to download TikTok audio for transcription.")
             full_text, segments = await transcriber.transcribe_audio_file(audio_file, language=language)
-            word_count = len(full_text.split())
-
             return TranscriptResponse(
                 metadata=metadata,
                 language=language,
                 full_text=full_text,
                 segments=segments,
                 source_type="tiktok_whisper_ai",
-                word_count=word_count
+                word_count=len(full_text.split())
             )
         finally:
             for p in [temp_audio, temp_audio + ".mp3"]:
@@ -105,5 +98,6 @@ class TikTokParser(BaseMediaParser):
                         os.remove(p)
                     except Exception:
                         pass
+
 
 tiktok_parser = TikTokParser()
