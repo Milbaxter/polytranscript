@@ -1,0 +1,52 @@
+{
+  "$schema": "https://smithery.ai/docs/config/schema.json",
+  "name": "polytranscript",
+  "version": "1.0.0",
+  "description": "Multi-platform media transcript & audio intelligence MCP server (YouTube + TikTok + Podcasts).",
+  "startCommand": {
+    "type": "stdio",
+    "config": {
+      "command": "python",
+      "args": ["backend/cli.py", "mcp"]
+    }
+  },
+  "tools": [
+    {
+      "name": "poly_transcribe",
+      "description": "Transcribe any YouTube video/short, TikTok clip, Apple/Spotify podcast, or direct audio URL into timestamped text.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The media URL"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code (default 'en')"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["markdown", "text", "json"],
+            "description": "Output format"
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    {
+      "name": "poly_get_metadata",
+      "description": "Extract media title, author, duration, views, and platform.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The media URL"
+          }
+        },
+        "required": ["url"]
+      }
+    }
+  ]
+}
