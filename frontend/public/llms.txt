@@ -1,0 +1,22 @@
+# PolyTranscript
+> Multi-platform transcription API and Model Context Protocol (MCP) server for YouTube, TikTok, and Podcasts.
+
+## Available Tools & URLs
+- Homepage / Universal Transcriber: https://polytranscript.com
+- YouTube Transcript Generator: https://polytranscript.com/youtube-transcript-generator
+- YouTube Shorts Transcriber: https://polytranscript.com/youtube-shorts-transcript-generator
+- YouTube to SRT Converter: https://polytranscript.com/youtube-to-srt-converter
+- TikTok Transcript Generator: https://polytranscript.com/tiktok-transcript-generator
+- TikTok Captions Extractor: https://polytranscript.com/tiktok-captions-extractor
+- Podcast to Text Transcriber: https://polytranscript.com/podcast-transcript-generator
+- Spotify Podcast Transcripts: https://polytranscript.com/spotify-podcast-transcript-generator
+- MP3 to Text Audio Converter: https://polytranscript.com/mp3-to-text-converter
+- Developer API & MCP Documentation: https://polytranscript.com/docs
+- Pricing & Sponsor Slots: https://polytranscript.com/pricing
+- API Key Dashboard: https://polytranscript.com/api-keys
+
+## Key Features
+- Free, instant, sub-second transcript extraction (under 200ms latency).
+- Direct export to Markdown, SRT, VTT, JSON, and LLM Prompt.
+- Native Model Context Protocol (MCP) server for Claude Desktop and Cursor.
+- Public Serverless API: POST https://polytranscript.com/api/transcribe
