@@ -2,13 +2,47 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Check, Sparkles, Zap, Shield, HelpCircle, ArrowRight, Key, Flame } from 'lucide-react';
+import { Check, Zap, ArrowRight, Flame, Loader2 } from 'lucide-react';
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+
+  const STRIPE_LINKS: Record<string, string> = {
+    starter: 'https://buy.stripe.com/3cI00i47Ad0K7qP5re2880k',
+    pro: 'https://buy.stripe.com/9B6cN48nQaSC9yXaLy2880l',
+    scale: 'https://buy.stripe.com/dRm14m1Zsf8S5iH1aY2880m',
+    sponsor: 'https://buy.stripe.com/5kQbJ0eMeaSC8uTcTG2880n',
+  };
+
+  const handleCheckout = async (tier: string) => {
+    if (tier === 'free') {
+      window.location.href = '/api-keys';
+      return;
+    }
+
+    setLoadingTier(tier);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    // Fallback to direct payment link
+    window.location.href = STRIPE_LINKS[tier] || STRIPE_LINKS.pro;
+  };
 
   const tiers = [
     {
+      id: 'free',
       name: 'Free / Community',
       price: '$0',
       description: 'Perfect for indie hackers, students, and casual prototyping.',
@@ -16,15 +50,14 @@ export default function PricingPage() {
         '50 API requests / month',
         'YouTube timedtext captions',
         'TikTok video parsing',
-        'Basic AI summaries',
         'Model Context Protocol (MCP) local stdio',
         'Community Discord & GitHub support',
       ],
       cta: 'Get Free Key',
-      href: '/api-keys',
       popular: false,
     },
     {
+      id: 'starter',
       name: 'Starter',
       price: billingCycle === 'monthly' ? '$29' : '$24',
       period: '/ month',
@@ -32,17 +65,15 @@ export default function PricingPage() {
       features: [
         '500 requests / month',
         'YouTube + TikTok + Podcasts (Apple & Spotify)',
-        'Automated AI Chaptering & Timestamps',
-        'Semantic Soundbite Search API',
         'Sub-second transcription response time',
         'Standard Rate Limits (60 req/min)',
         'Email & Developer Support',
       ],
-      cta: 'Start Starter Plan',
-      href: '/api-keys?tier=starter',
+      cta: 'Subscribe to Starter ($29/mo)',
       popular: false,
     },
     {
+      id: 'pro',
       name: 'Pro (Most Popular)',
       price: billingCycle === 'monthly' ? '$79' : '$64',
       period: '/ month',
@@ -52,16 +83,14 @@ export default function PricingPage() {
         'All Starter features included',
         'Whisper AI audio fallback for videos without captions',
         'Direct MP3 / M4A / WAV file uploads',
-        'Speaker Diarization support',
-        'Grounded RAG Q&A endpoint',
         'High concurrency (300 req/min)',
-        'Priority Slack / Discord channel',
+        'Priority Developer Support',
       ],
-      cta: 'Upgrade to Pro',
-      href: '/api-keys?tier=pro',
+      cta: 'Upgrade to Pro ($79/mo)',
       popular: true,
     },
     {
+      id: 'scale',
       name: 'Scale / Agency',
       price: billingCycle === 'monthly' ? '$299' : '$249',
       period: '/ month',
@@ -70,13 +99,10 @@ export default function PricingPage() {
         '15,000 requests / month',
         'Custom Webhook callbacks for bulk jobs',
         'Dedicated proxy rotation infrastructure (0% 429 rate)',
-        'Custom AI Chaptering schemas & prompts',
         'Unlimited concurrency',
         '99.9% Uptime SLA',
-        '1-on-1 Engineering integration support',
       ],
-      cta: 'Contact Sales / Subscribe',
-      href: '/api-keys?tier=scale',
+      cta: 'Subscribe to Scale ($299/mo)',
       popular: false,
     },
   ];
@@ -157,21 +183,31 @@ export default function PricingPage() {
             </div>
 
             <div className="pt-6">
-              <Link
-                href={t.href}
+              <button
+                onClick={() => handleCheckout(t.id)}
+                disabled={loadingTier === t.id}
                 className={`w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   t.popular ? 'gradient-btn text-white shadow-md' : 'bg-white/10 hover:bg-white/20 text-white'
                 }`}
               >
-                <span>{t.cta}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+                {loadingTier === t.id ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Redirecting to Stripe...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{t.cta}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Sponsor Monetization Blueprint Section ($11k/mo Arbitrage Model) */}
+      {/* Sponsor Monetization Banner */}
       <section id="sponsor" className="p-8 sm:p-12 rounded-3xl glass-panel-glow border-purple-500/30 space-y-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2">
@@ -187,10 +223,12 @@ export default function PricingPage() {
             </p>
           </div>
           <a
-            href="mailto:sponsor@polytranscript.dev?subject=Sponsor Slot Inquiry"
+            href="https://buy.stripe.com/5kQbJ0eMeaSC8uTcTG2880n"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-6 py-3 rounded-xl gradient-btn text-white text-xs font-semibold whitespace-nowrap shadow-lg flex items-center gap-2"
           >
-            <span>Book Sponsor Banner</span>
+            <span>Book Sponsor Banner ($500/mo)</span>
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>

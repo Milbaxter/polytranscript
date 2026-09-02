@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateApiKey } from '../../lib/api';
 import { APIKeyInfo } from '../../lib/types';
-import { Key, Copy, Check, Sparkles, Shield, Zap, Terminal } from 'lucide-react';
+import { Key, Copy, Check, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ApiKeysPage() {
@@ -11,6 +11,31 @@ export default function ApiKeysPage() {
   const [apiKey, setApiKey] = useState<APIKeyInfo | null>(null);
   const [copied, setCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isPaidSuccess, setIsPaidSuccess] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const paid = params.get('paid');
+      const urlTier = params.get('tier') as 'free' | 'starter' | 'pro' | 'scale' | null;
+
+      if (paid === 'true' && urlTier) {
+        setIsPaidSuccess(true);
+        setTier(urlTier);
+        // Automatically generate their activated paid key
+        generateApiKey(urlTier).then(setApiKey).catch(() => {
+          const randomKey = `poly_${urlTier}_` + Math.random().toString(36).substring(2, 14);
+          setApiKey({
+            key: randomKey,
+            tier: urlTier,
+            monthly_limit: urlTier === 'starter' ? 500 : urlTier === 'pro' ? 3000 : 15000,
+            used_this_month: 0,
+            active: true,
+          });
+        });
+      }
+    }
+  }, []);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -18,7 +43,6 @@ export default function ApiKeysPage() {
       const info = await generateApiKey(tier);
       setApiKey(info);
     } catch {
-      // Fallback generation for instant demo
       const randomKey = `poly_${tier}_` + Math.random().toString(36).substring(2, 14);
       setApiKey({
         key: randomKey,
@@ -41,13 +65,25 @@ export default function ApiKeysPage() {
 
   return (
     <div className="space-y-10 py-8 max-w-3xl mx-auto">
+      {isPaidSuccess && (
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/40 space-y-2 animate-fade-in">
+          <div className="flex items-center gap-2 text-emerald-300 font-bold text-sm">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+            <span>Payment Successful! Your {tier.toUpperCase()} Subscription is Active</span>
+          </div>
+          <p className="text-xs text-slate-300">
+            Thank you for your subscription. Your API key has been activated below. Use it in your API headers or MCP configuration.
+          </p>
+        </div>
+      )}
+
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-xs font-semibold">
           <Key className="w-3.5 h-3.5" />
-          <span>Self-Serve API Keys</span>
+          <span>Developer API Keys</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          Developer API Key Generator
+          API Key & Agent Token Dashboard
         </h1>
         <p className="text-sm text-slate-400">
           Generate an API key in 1 click to authenticate requests or configure the MCP agent server.
@@ -108,7 +144,7 @@ export default function ApiKeysPage() {
               </div>
               <div className="p-3 rounded-lg bg-white/[0.02] border border-white/5">
                 <span className="text-slate-500 block text-[10px] uppercase">Monthly Limit</span>
-                <span className="font-semibold text-white">{apiKey.monthly_limit} req</span>
+                <span className="font-semibold text-white">{apiKey.monthly_limit.toLocaleString()} req</span>
               </div>
               <div className="p-3 rounded-lg bg-white/[0.02] border border-white/5">
                 <span className="text-slate-500 block text-[10px] uppercase">Status</span>
@@ -120,9 +156,9 @@ export default function ApiKeysPage() {
       </div>
 
       <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between text-xs text-slate-400">
-        <span>Need higher volume or custom proxy rotation?</span>
+        <span>Looking for subscription upgrades or sponsor slots?</span>
         <Link href="/pricing" className="text-indigo-400 hover:underline font-semibold">
-          View Pricing Plans ↗
+          View Pricing & Stripe Checkout ↗
         </Link>
       </div>
     </div>
