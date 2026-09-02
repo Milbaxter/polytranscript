@@ -2,7 +2,7 @@
   "$schema": "https://smithery.ai/docs/config/schema.json",
   "name": "polytranscript",
   "version": "1.0.0",
-  "description": "Multi-platform media transcript & audio intelligence MCP server (YouTube + TikTok + Podcasts).",
+  "description": "Multi-platform media transcript and audio intelligence MCP server (YouTube + TikTok + Podcasts).",
   "startCommand": {
     "type": "stdio",
     "config": {
@@ -13,23 +13,13 @@
   "tools": [
     {
       "name": "poly_transcribe",
-      "description": "Transcribe any YouTube video/short, TikTok clip, Apple/Spotify podcast, or direct audio URL into timestamped text.",
+      "description": "Transcribe any YouTube video/short, TikTok clip, Apple/RSS podcast, or direct audio URL into timestamped text.",
       "parameters": {
         "type": "object",
         "properties": {
-          "url": {
-            "type": "string",
-            "description": "The media URL"
-          },
-          "language": {
-            "type": "string",
-            "description": "Language code (default 'en')"
-          },
-          "format": {
-            "type": "string",
-            "enum": ["markdown", "text", "json"],
-            "description": "Output format"
-          }
+          "url": { "type": "string", "description": "The media URL" },
+          "language": { "type": "string", "description": "Language code (default en)" },
+          "format": { "type": "string", "enum": ["markdown", "text", "json"], "description": "Output format" }
         },
         "required": ["url"]
       }
@@ -40,12 +30,55 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "url": {
-            "type": "string",
-            "description": "The media URL"
-          }
+          "url": { "type": "string", "description": "The media URL" }
         },
         "required": ["url"]
+      }
+    },
+    {
+      "name": "poly_get_chapters",
+      "description": "Generate timestamped chapters with summaries for any supported media URL.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "description": "The media URL" }
+        },
+        "required": ["url"]
+      }
+    },
+    {
+      "name": "poly_summarize",
+      "description": "Executive TL;DR, key takeaways, action items, and soundbites from a media URL.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "description": "The media URL" }
+        },
+        "required": ["url"]
+      }
+    },
+    {
+      "name": "poly_search_soundbites",
+      "description": "Keyword/token-overlap search across a transcript (not embedding semantic search) with timestamps.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "description": "The media URL" },
+          "query": { "type": "string", "description": "Search term or phrase" }
+        },
+        "required": ["url", "query"]
+      }
+    },
+    {
+      "name": "poly_ask_media",
+      "description": "Ask a question about a video or podcast and get a grounded answer with timestamp citations.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "description": "The media URL" },
+          "question": { "type": "string", "description": "The user's question" }
+        },
+        "required": ["url", "question"]
       }
     }
   ]
