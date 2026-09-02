@@ -1,99 +1,60 @@
-from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional
 from fastapi import Header, HTTPException, status
 from app.config import settings
 from app.models import APIKeyInfo
+from app.utils.key_store import get_key, increment_usage, mint_key
 
-# In-memory API key registry with preloaded demo / testing keys
-API_KEYS_DB: Dict[str, APIKeyInfo] = {
-    "poly_free_demo_key": APIKeyInfo(
-        key="poly_free_demo_key",
-        tier="free",
-        monthly_limit=50,
-        used_this_month=12,
-        active=True
-    ),
-    "poly_starter_live_key": APIKeyInfo(
-        key="poly_starter_live_key",
-        tier="starter",
-        monthly_limit=500,
-        used_this_month=45,
-        active=True
-    ),
-    "poly_pro_live_key": APIKeyInfo(
-        key="poly_pro_live_key",
-        tier="pro",
-        monthly_limit=3000,
-        used_this_month=210,
-        active=True
-    ),
-    "poly_scale_live_key": APIKeyInfo(
-        key="poly_scale_live_key",
-        tier="scale",
-        monthly_limit=15000,
-        used_this_month=1400,
-        active=True
-    )
-}
+PAID_TIERS = {"starter", "pro", "scale", "enterprise"}
+
 
 async def verify_api_key(x_api_key: Optional[str] = Header(None, alias="X-API-Key")) -> Optional[APIKeyInfo]:
     """
-    Validate API key from request headers.
-    If no key is provided, returns a free anonymous guest tier object.
+    Validate API key from request headers against the persistent store.
+    A missing key is treated as an anonymous free guest (rate-limited).
+    Keys are NEVER auto-promoted to Pro based on a `poly_` prefix.
     """
     if not x_api_key:
         return APIKeyInfo(
             key="guest_anonymous",
             tier="free",
             monthly_limit=settings.DEFAULT_FREE_DAILY_LIMIT,
-            used_this_month=1,
-            active=True
+            used_this_month=0,
+            active=True,
         )
 
-    # Check key existence
-    key_info = API_KEYS_DB.get(x_api_key)
+    key_info = get_key(x_api_key)
     if not key_info or not key_info.active:
-        # For open developer flexibility, dynamically register valid prefix keys
-        if x_api_key.startswith("poly_"):
-            API_KEYS_DB[x_api_key] = APIKeyInfo(
-                key=x_api_key,
-                tier="pro",
-                monthly_limit=settings.PRO_MONTHLY_LIMIT,
-                used_this_month=1,
-                active=True
-            )
-            return API_KEYS_DB[x_api_key]
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or revoked API key. Pass 'X-API-Key: poly_free_demo_key' or visit /pricing to generate one."
+            detail="Invalid or revoked API key. Generate a free key at /api-keys or complete Stripe checkout for a paid tier.",
         )
 
-    # Check rate limits
     if key_info.used_this_month >= key_info.monthly_limit:
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Rate limit exceeded for tier '{key_info.tier}'. Upgrade your tier at /pricing to continue."
+            detail=f"Rate limit exceeded for tier '{key_info.tier}'. Upgrade at /pricing.",
         )
 
-    key_info.used_this_month += 1
-    return key_info
+    return increment_usage(x_api_key) or key_info
 
-def generate_new_api_key(tier: str = "starter") -> APIKeyInfo:
-    import uuid
-    new_key = f"poly_{tier}_{uuid.uuid4().hex[:12]}"
-    limit_map = {
-        "free": 50,
-        "starter": settings.STARTER_MONTHLY_LIMIT,
-        "pro": settings.PRO_MONTHLY_LIMIT,
-        "scale": settings.SCALE_MONTHLY_LIMIT,
-        "enterprise": 100000
-    }
-    info = APIKeyInfo(
-        key=new_key,
+
+def generate_new_api_key(
+    tier: str = "free",
+    *,
+    paid_verified: bool = False,
+    stripe_session_id: Optional[str] = None,
+    customer_email: Optional[str] = None,
+) -> APIKeyInfo:
+    """Mint a key. Paid tiers require paid_verified=True (Stripe webhook/fulfill)."""
+    if tier not in {"free", "starter", "pro", "scale", "enterprise"}:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unknown tier.")
+    if tier in PAID_TIERS and not paid_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Paid API keys are issued only after a verified Stripe checkout (webhook). Use tier=free or complete payment.",
+        )
+    return mint_key(
         tier=tier,
-        monthly_limit=limit_map.get(tier, 500),
-        used_this_month=0,
-        active=True
+        stripe_session_id=stripe_session_id,
+        customer_email=customer_email,
     )
-    API_KEYS_DB[new_key] = info
-    return info
