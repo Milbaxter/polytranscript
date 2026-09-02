@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     DEFAULT_WHISPER_MODEL: str = "whisper-large-v3"
     LOCAL_WHISPER_FALLBACK: bool = True
 
+    # Proxy Configuration (For high-volume scraping without 429 IP bans)
+    HTTP_PROXY: Optional[str] = os.getenv("HTTP_PROXY", None)
+    HTTPS_PROXY: Optional[str] = os.getenv("HTTPS_PROXY", None)
+
     # Monetization & Rate Limiting Settings
     DEFAULT_FREE_DAILY_LIMIT: int = 15
     STARTER_MONTHLY_LIMIT: int = 500
@@ -32,7 +36,7 @@ class Settings(BaseSettings):
     # Sponsor Banner Configuration (Replicating YouTubeToTranscript's $11k/mo ad slot model)
     SPONSOR_ENABLED: bool = True
     SPONSOR_TEXT: str = "🚀 Sponsor this slot — Reach 100K+ AI builders & researchers monthly"
-    SPONSOR_LINK: str = "https://omnitranscript.dev/sponsor"
+    SPONSOR_LINK: str = "https://omnitranscript.dev/pricing#sponsor"
     SPONSOR_BADGE: str = "Featured Sponsor"
 
     # Storage / Temp paths

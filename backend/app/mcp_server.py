@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 from mcp.server.fastmcp import FastMCP
 
 from app.parsers.universal import universal_parser
@@ -23,12 +24,15 @@ async def omni_transcribe(url: str, language: str = "en", format: str = "markdow
         language: Optional language code (default 'en')
         format: 'markdown', 'text', or 'json'
     """
-    transcript = await universal_parser.extract_transcript(url, language=language)
-    if format == "markdown":
-        return format_markdown(transcript)
-    elif format == "json":
-        return transcript.model_dump_json(indent=2)
-    return transcript.full_text
+    try:
+        transcript = await universal_parser.extract_transcript(url, language=language)
+        if format == "markdown":
+            return format_markdown(transcript)
+        elif format == "json":
+            return transcript.model_dump_json(indent=2)
+        return transcript.full_text
+    except Exception as e:
+        return f"Error transcribing media from '{url}': {str(e)}"
 
 @mcp.tool()
 async def omni_get_chapters(url: str) -> str:
@@ -38,18 +42,21 @@ async def omni_get_chapters(url: str) -> str:
     Args:
         url: The media URL
     """
-    transcript = await universal_parser.extract_transcript(url)
-    chapters = await chapter_generator.generate_chapters(transcript.segments, transcript.full_text)
-    
-    output = [f"# Chapters for {transcript.metadata.title}\n"]
-    for c in chapters:
-        output.append(f"### [{c.formatted_start}] {c.title}")
-        output.append(f"{c.summary}")
-        if c.key_points:
-            for kp in c.key_points:
-                output.append(f"- {kp}")
-        output.append("")
-    return "\n".join(output)
+    try:
+        transcript = await universal_parser.extract_transcript(url)
+        chapters = await chapter_generator.generate_chapters(transcript.segments, transcript.full_text)
+        
+        output = [f"# Chapters for {transcript.metadata.title}\n"]
+        for c in chapters:
+            output.append(f"### [{c.formatted_start}] {c.title}")
+            output.append(f"{c.summary}")
+            if c.key_points:
+                for kp in c.key_points:
+                    output.append(f"- {kp}")
+            output.append("")
+        return "\n".join(output)
+    except Exception as e:
+        return f"Error extracting chapters for '{url}': {str(e)}"
 
 @mcp.tool()
 async def omni_summarize(url: str) -> str:
@@ -59,21 +66,24 @@ async def omni_summarize(url: str) -> str:
     Args:
         url: The media URL
     """
-    transcript = await universal_parser.extract_transcript(url)
-    summary = await summarizer.generate_summary(transcript)
-    
-    output = [
-        f"# Executive Summary: {transcript.metadata.title}",
-        f"**Source:** {url}\n",
-        f"## ⚡ TL;DR\n{summary.tldr}\n",
-        "## 🎯 Key Takeaways",
-        *[f"- {t}" for t in summary.key_takeaways],
-        "\n## 🛠 Action Items",
-        *[f"- [ ] {a}" for a in summary.action_items],
-        "\n## 💬 Notable Quotes",
-        *[f"> {q}" for q in summary.soundbites]
-    ]
-    return "\n".join(output)
+    try:
+        transcript = await universal_parser.extract_transcript(url)
+        summary = await summarizer.generate_summary(transcript)
+        
+        output = [
+            f"# Executive Summary: {transcript.metadata.title}",
+            f"**Source:** {url}\n",
+            f"## ⚡ TL;DR\n{summary.tldr}\n",
+            "## 🎯 Key Takeaways",
+            *[f"- {t}" for t in summary.key_takeaways],
+            "\n## 🛠 Action Items",
+            *[f"- [ ] {a}" for a in summary.action_items],
+            "\n## 💬 Notable Quotes",
+            *[f"> {q}" for q in summary.soundbites]
+        ]
+        return "\n".join(output)
+    except Exception as e:
+        return f"Error summarizing media from '{url}': {str(e)}"
 
 @mcp.tool()
 async def omni_search_soundbites(url: str, query: str) -> str:
@@ -84,16 +94,19 @@ async def omni_search_soundbites(url: str, query: str) -> str:
         url: The media URL
         query: Search term or concept
     """
-    transcript = await universal_parser.extract_transcript(url)
-    search_res = searcher.search(transcript.segments, query, top_k=10)
-    
-    output = [f"# Search Results for \"{query}\" in {transcript.metadata.title}\n"]
-    if not search_res.hits:
-        return f"No matches found for '{query}'."
+    try:
+        transcript = await universal_parser.extract_transcript(url)
+        search_res = searcher.search(transcript.segments, query, top_k=10)
         
-    for h in search_res.hits:
-        output.append(f"- `[{h.formatted_start}]` {h.text} *(relevance: {h.score})*")
-    return "\n".join(output)
+        output = [f"# Search Results for \"{query}\" in {transcript.metadata.title}\n"]
+        if not search_res.hits:
+            return f"No matches found for '{query}' in '{transcript.metadata.title}'."
+            
+        for h in search_res.hits:
+            output.append(f"- `[{h.formatted_start}]` {h.text} *(relevance: {h.score})*")
+        return "\n".join(output)
+    except Exception as e:
+        return f"Error searching soundbites in '{url}': {str(e)}"
 
 @mcp.tool()
 async def omni_ask_media(url: str, question: str) -> str:
@@ -104,15 +117,18 @@ async def omni_ask_media(url: str, question: str) -> str:
         url: The media URL
         question: The user's question
     """
-    transcript = await universal_parser.extract_transcript(url)
-    res = await chat_engine.answer_question(question, transcript.full_text, transcript.segments)
-    
-    output = [f"**Answer:**\n{res.answer}\n"]
-    if res.relevant_timestamps:
-        output.append("**Timestamp Citations:**")
-        for c in res.relevant_timestamps:
-            output.append(f"- `[{c['formatted_start']}]` \"{c['text']}\"")
-    return "\n".join(output)
+    try:
+        transcript = await universal_parser.extract_transcript(url)
+        res = await chat_engine.answer_question(question, transcript.full_text, transcript.segments)
+        
+        output = [f"**Answer:**\n{res.answer}\n"]
+        if res.relevant_timestamps:
+            output.append("**Timestamp Citations:**")
+            for c in res.relevant_timestamps:
+                output.append(f"- `[{c['formatted_start']}]` \"{c['text']}\"")
+        return "\n".join(output)
+    except Exception as e:
+        return f"Error answering question for '{url}': {str(e)}"
 
 @mcp.tool()
 async def omni_get_metadata(url: str) -> str:
@@ -122,8 +138,11 @@ async def omni_get_metadata(url: str) -> str:
     Args:
         url: The media URL
     """
-    meta = await universal_parser.extract_metadata(url)
-    return meta.model_dump_json(indent=2)
+    try:
+        meta = await universal_parser.extract_metadata(url)
+        return meta.model_dump_json(indent=2)
+    except Exception as e:
+        return f"Error fetching metadata for '{url}': {str(e)}"
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
