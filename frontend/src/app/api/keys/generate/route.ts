@@ -2,23 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const tier = searchParams.get('tier') || 'starter';
-  
-  const limits: Record<string, number> = {
-    free: 50,
-    starter: 500,
-    pro: 3000,
-    scale: 15000,
-  };
+  const tier = (searchParams.get('tier') || 'free').toLowerCase();
 
-  const randomSuffix = Math.random().toString(36).substring(2, 14);
-  const key = `poly_${tier}_${randomSuffix}`;
+  if (tier !== 'free') {
+    return NextResponse.json(
+      {
+        detail: 'Paid API keys are issued only after a verified Stripe checkout webhook. Generate a free key or complete payment on /pricing.',
+      },
+      { status: 403 }
+    );
+  }
 
-  return NextResponse.json({
-    key,
-    tier,
-    monthly_limit: limits[tier] || 500,
-    used_this_month: 0,
-    active: true,
-  });
+  const backend = process.env.BACKEND_URL;
+  if (!backend) {
+    return NextResponse.json(
+      { detail: 'BACKEND_URL is not configured. Free keys must be minted by the FastAPI key store.' },
+      { status: 503 }
+    );
+  }
+
+  try {
+    const resp = await fetch(`${backend.replace(/\/$/, '')}/api/v1/keys/generate?tier=free`, { method: 'POST' });
+    const data = await resp.json().catch(() => ({ detail: 'Backend key mint failed' }));
+    return NextResponse.json(data, { status: resp.status });
+  } catch (e: any) {
+    return NextResponse.json({ detail: `Key service unreachable: ${e.message}` }, { status: 503 });
+  }
 }
