@@ -2,8 +2,15 @@
 
 import React, { useRef, useEffect } from 'react';
 import { MediaMetadata } from '../lib/types';
-import { Music, Video } from 'lucide-react';
+import { Music } from 'lucide-react';
 import { YoutubeIcon, TikTokIcon } from './Icons';
+
+declare global {
+  interface Window {
+    YT?: any;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
 
 interface InteractivePlayerProps {
   metadata: MediaMetadata;
@@ -12,6 +19,8 @@ interface InteractivePlayerProps {
 
 export const InteractivePlayer: React.FC<InteractivePlayerProps> = ({ metadata, seekTime }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const playerRef = useRef<any>(null);
 
   const getYouTubeId = (url: string) => {
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
@@ -21,11 +30,57 @@ export const InteractivePlayer: React.FC<InteractivePlayerProps> = ({ metadata, 
   const ytId = getYouTubeId(metadata.url);
 
   useEffect(() => {
-    if (seekTime !== null) {
-      if (audioRef.current) {
-        audioRef.current.currentTime = seekTime;
-        audioRef.current.play().catch(() => {});
+    if (!ytId || !containerRef.current) return;
+    let cancelled = false;
+
+    const createPlayer = () => {
+      if (cancelled || !containerRef.current || !window.YT?.Player) return;
+      try {
+        playerRef.current?.destroy?.();
+      } catch {}
+      playerRef.current = new window.YT.Player(containerRef.current, {
+        videoId: ytId,
+        width: '100%',
+        height: '100%',
+        playerVars: { enablejsapi: 1, rel: 0, modestbranding: 1 },
+      });
+    };
+
+    if (window.YT?.Player) {
+      createPlayer();
+    } else {
+      const existing = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+      if (!existing) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
       }
+      const previous = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        previous?.();
+        createPlayer();
+      };
+    }
+
+    return () => {
+      cancelled = true;
+      try {
+        playerRef.current?.destroy?.();
+      } catch {}
+      playerRef.current = null;
+    };
+  }, [ytId]);
+
+  useEffect(() => {
+    if (seekTime === null) return;
+    if (audioRef.current) {
+      audioRef.current.currentTime = seekTime;
+      audioRef.current.play().catch(() => {});
+    }
+    const player = playerRef.current;
+    if (player?.seekTo) {
+      player.seekTo(seekTime, true);
+      player.playVideo?.();
     }
   }, [seekTime]);
 
@@ -49,13 +104,7 @@ export const InteractivePlayer: React.FC<InteractivePlayerProps> = ({ metadata, 
 
       {ytId ? (
         <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/40">
-          <iframe
-            src={`https://www.youtube.com/embed/${ytId}?enablejsapi=1${seekTime !== null ? `&start=${Math.floor(seekTime)}&autoplay=1` : ''}`}
-            title={metadata.title}
-            className="w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <div ref={containerRef} className="w-full h-full" />
         </div>
       ) : metadata.url.match(/\.(mp3|wav|ogg|m4a)/i) ? (
         <div className="p-4 rounded-xl bg-slate-900/60 flex flex-col gap-3">
