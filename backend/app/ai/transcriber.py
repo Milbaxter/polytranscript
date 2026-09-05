@@ -39,8 +39,10 @@ class AudioTranscriber:
             except Exception as e:
                 print(f"[Transcriber] OpenAI Whisper failed: {e}")
 
-        # 3. Fallback: Local Whisper CLI / Mock parser for testing environment
-        return self._local_or_mock_transcribe(processed_path)
+        raise RuntimeError(
+            "No speech-to-text provider is configured. Set GROQ_API_KEY or OPENAI_API_KEY, "
+            "or install a local Whisper runtime. Canned demo transcripts are disabled."
+        )
 
     def _preprocess_audio(self, input_path: str) -> str:
         """Convert any audio/video file to 16kHz mono MP3 for high compression and Whisper compatibility."""
@@ -110,24 +112,8 @@ class AudioTranscriber:
         return full_text, segments
 
     def _local_or_mock_transcribe(self, audio_path: str) -> Tuple[str, List[TranscriptSegment]]:
-        """Generate structured transcript if no external API key is active."""
-        # Check audio length via ffprobe
-        duration = 60.0
-        try:
-            probe = subprocess.run(
-                ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", audio_path],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-            )
-            duration = float(probe.stdout.strip())
-        except Exception:
-            duration = 60.0
-
-        sample_segments = [
-            TranscriptSegment(start=0.0, end=min(15.0, duration), text="Welcome to this episode. Today we are breaking down multi-platform media intelligence and agentic workflows."),
-            TranscriptSegment(start=min(15.0, duration), end=min(35.0, duration), text="We are exploring how automated transcript extraction and Model Context Protocol (MCP) transform unstructured audio into actionable knowledge."),
-            TranscriptSegment(start=min(35.0, duration), end=duration, text="By indexing YouTube, TikTok, and podcasts natively, autonomous agents can search soundbites and reason over rich media in real-time.")
-        ]
-        full_text = " ".join([s.text for s in sample_segments])
-        return full_text, sample_segments
+        raise RuntimeError(
+            f"Refusing canned transcript for {audio_path}. Configure GROQ_API_KEY or OPENAI_API_KEY."
+        )
 
 transcriber = AudioTranscriber()

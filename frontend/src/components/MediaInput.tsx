@@ -35,7 +35,7 @@ export const MediaInput: React.FC<MediaInputProps> = ({ onTranscribe, isLoading 
   const sampleUrls = [
     { label: '3Blue1Brown (YouTube)', url: 'https://www.youtube.com/watch?v=aircAruvnKk' },
     { label: 'Lex Fridman (YouTube)', url: 'https://www.youtube.com/watch?v=jvqFAi7vkBc' },
-    { label: 'Tech Podcast (RSS / MP3)', url: 'https://traffic.libsyn.com/show/episode1.mp3' },
+    { label: 'This American Life (RSS)', url: 'https://www.thisamericanlife.org/podcast/rss.xml' },
   ];
 
   return (
