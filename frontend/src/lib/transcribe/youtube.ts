@@ -44,46 +44,62 @@ export async function transcribeYouTube(url: string, language: string): Promise<
   };
 }
 
+const PLAYER_ENDPOINTS = [
+  'https://youtubei.googleapis.com/youtubei/v1/player?prettyPrint=false',
+  'https://www.youtube.com/youtubei/v1/player?prettyPrint=false',
+];
+
 async function fetchIosPlayer(videoId: string): Promise<any> {
-  const resp = await fetch('https://www.youtube.com/youtubei/v1/player?prettyPrint=false', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'User-Agent': IOS_UA,
-      'X-YouTube-Client-Name': '5',
-    },
-    body: JSON.stringify({
-      context: {
-        client: {
-          clientName: 'IOS',
-          clientVersion: '21.02.3',
-          deviceMake: 'Apple',
-          deviceModel: 'iPhone16,2',
-          osName: 'iPhone',
-          osVersion: '18.3.2.22D82',
-          hl: 'en',
-          gl: 'US',
-        },
+  const body = JSON.stringify({
+    context: {
+      client: {
+        clientName: 'IOS',
+        clientVersion: '21.02.3',
+        deviceMake: 'Apple',
+        deviceModel: 'iPhone16,2',
+        osName: 'iPhone',
+        osVersion: '18.3.2.22D82',
+        hl: 'en',
+        gl: 'US',
       },
-      videoId,
-      contentCheckOk: true,
-      racyCheckOk: true,
-    }),
+    },
+    videoId,
+    contentCheckOk: true,
+    racyCheckOk: true,
   });
 
-  if (!resp.ok) {
-    throw new TranscribeError(`YouTube player request failed (${resp.status}).`, 502);
+  let lastError = 'YouTube player request failed.';
+  for (const endpoint of PLAYER_ENDPOINTS) {
+    try {
+      const resp = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': IOS_UA,
+          'X-YouTube-Client-Name': '5',
+        },
+        body,
+      });
+      if (!resp.ok) {
+        lastError = `YouTube player request failed (${resp.status}).`;
+        continue;
+      }
+      const data = await resp.json();
+      const status = data?.playabilityStatus?.status;
+      const tracks =
+        data?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
+      if (status === 'OK' && tracks.length > 0) {
+        return data;
+      }
+      lastError =
+        data?.playabilityStatus?.reason ||
+        `YouTube rejected playback (${status || 'unknown'}).`;
+    } catch (err: any) {
+      lastError = err?.message || lastError;
+    }
   }
 
-  const data = await resp.json();
-  const status = data?.playabilityStatus?.status;
-  if (status && status !== 'OK') {
-    throw new TranscribeError(
-      data?.playabilityStatus?.reason || `YouTube rejected playback (${status}).`,
-      502
-    );
-  }
-  return data;
+  throw new TranscribeError(lastError, 502);
 }
 
 function getCaptionTracks(player: any): CaptionTrack[] {
